@@ -1,0 +1,17 @@
+{
+  "name": "chatime",
+  "version": "1.0.0",
+  "description": "A Space To Chat With People",
+  "license": "ISC",
+  "author": "Aflah",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app",
+    "dev" : "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
