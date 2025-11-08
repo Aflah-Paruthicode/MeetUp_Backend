@@ -1,16 +1,12 @@
 const express = require("express");
-
+const { connectDb } = require("./config/database");
 const app = express();
 
-app.use("/proffile", (req, res) => {
-  res.send("hai dude , wanna edit anything?");
-}); 
-
-app.use("/ha", (req, res) => {
-  res.send("hai from home");
-});
-
-
-app.listen(8080, () => {
-  console.log("Server Started");
-});
+connectDb()
+  .then(() => {
+    console.log("Database connection is did");
+    app.listen(8080, () => {
+      console.log("Server Started");
+    });
+  })
+  .catch((err) => console.error("Got a db error"));
