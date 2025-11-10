@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   name: {
     type: String,
+     
   },
   favMovie: {
     type: String,
