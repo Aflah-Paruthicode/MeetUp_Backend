@@ -47,10 +47,22 @@ app.get('/feed', async (req,res) => {
 app.delete('/user',async (req,res) => { 
   const id = req.body.id
   try { 
-    const user = await User.findByIdAndDelete({_id:id})
+    const user = await User.findByIdAndDelete({_id:id}) 
     res.status(200).send(user)
   } catch (err) { 
     res.status(404).send('Something Went Wrong')
+  }
+})
+
+app.patch('/user',async (req,res) => { 
+  const userId = req.body.id;
+  const data = req.body;
+
+  try { 
+    const user = await User.findByIdAndUpdate({_id : userId}, data);
+    res.status(200).send('User Updated Successfull', user)
+  } catch (error) { 
+    res.status(404).send('Something Went Wrong');
   }
 })
 
