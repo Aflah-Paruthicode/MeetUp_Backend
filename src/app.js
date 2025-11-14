@@ -1,13 +1,14 @@
 const express = require("express");
 const { connectDb } = require("./config/database");
 const User = require("./model/user");
+const { validateSignUpData } = require("./utils/validation");
 const app = express();
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
   console.log(req.body);
-
+  validateSignUpData(req)
   try {
     const { email } = req.body;
     const isEmailUnique = await User.find({ email: email });
@@ -56,10 +57,18 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userId = req.body.id;
+app.patch("/user/:id", async (req, res) => {
+  const userId = req.params.id;
   const data = req.body;
 
+  
+  const AllowedUpdates = ['place','studying','gender','favMovie','name']
+
+  const isUpdateAllowed = Object.keys(data).every((ele) => 
+    AllowedUpdates.includes(ele)
+  )
+
+  if(!isUpdateAllowed) throw new Error('Update not allowed')
   try {
     const user = await User.findByIdAndUpdate({ _id: userId }, data,{runValidators:true});
     res.status(200).send("User Updated Successfull", user);
