@@ -3,24 +3,45 @@ const { connectDb } = require("./config/database");
 const User = require("./model/user");
 const { validateSignUpData } = require("./utils/validation");
 const app = express();
+const bcrypt = require("bcrypt");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  validateSignUpData(req)
   try {
-    const { email } = req.body;
+    const { name, email, password, favMovie, gender, place, studying } =
+      req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    validateSignUpData(req);
     const isEmailUnique = await User.find({ email: email });
-    if (isEmailUnique.length !== 0) {
-      res.status(404).send("Email Already Exists");
-    } else {
-      const user = new User(req.body);
-      await user.save();
-      res.send("Document added successfull");
-    }
+    if (isEmailUnique.length !== 0)
+      throw new Error("Email is already registered");
+    const user = new User({
+      name,
+      email,
+      password: passwordHash,
+      favMovie,
+      gender,
+      place,
+      studying,
+    });
+    await user.save();
+    res.send("Document added successfull");
   } catch (error) {
-    res.status(400).send("Error Occured In Adding Doc - "+ error.message);
+    res.status(400).send("Error Occured In Adding Doc - " + error.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) throw new Error("Invalid credentials"); 
+    const isPaswordValid = await bcrypt.compare(password, user.password);
+    if (!isPaswordValid) throw new Error("Invalid credentials");
+    res.status(200).send("Login Succeccfull");
+  } catch (err) {
+    res.status(404).send("Error in login - " + err);
   }
 });
 
@@ -61,16 +82,17 @@ app.patch("/user/:id", async (req, res) => {
   const userId = req.params.id;
   const data = req.body;
 
-  
-  const AllowedUpdates = ['place','studying','gender','favMovie','name']
+  const AllowedUpdates = ["place", "studying", "gender", "favMovie", "name"];
 
-  const isUpdateAllowed = Object.keys(data).every((ele) => 
+  const isUpdateAllowed = Object.keys(data).every((ele) =>
     AllowedUpdates.includes(ele)
-  )
+  );
 
-  if(!isUpdateAllowed) throw new Error('Update not allowed')
+  if (!isUpdateAllowed) throw new Error("Update not allowed");
   try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data,{runValidators:true});
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      runValidators: true,
+    });
     res.status(200).send("User Updated Successfull", user);
   } catch (error) {
     res.status(404).send("Something Went Wrong");
