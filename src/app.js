@@ -4,8 +4,10 @@ const User = require("./model/user");
 const { validateSignUpData } = require("./utils/validation");
 const app = express();
 const bcrypt = require("bcrypt");
+const cookieParser = require('cookie-parser')
 
 app.use(express.json());
+app.use(cookieParser())
 
 app.post("/signup", async (req, res) => {
   try {
@@ -39,6 +41,7 @@ app.post("/login", async (req, res) => {
     if (!user) throw new Error("Invalid credentials"); 
     const isPaswordValid = await bcrypt.compare(password, user.password);
     if (!isPaswordValid) throw new Error("Invalid credentials");
+    res.cookie('token','fhfjskdskdjksjdksjdjjjjjjjksjdksdkd')
     res.status(200).send("Login Succeccfull");
   } catch (err) {
     res.status(404).send("Error in login - " + err);
@@ -50,9 +53,11 @@ app.get("/users", async (req, res) => {
   try {
     const users = await User.find({ name: name });
     if (users.length !== 0) {
+      console.log(req.cookies) 
       res.send(users);
     } else {
-      res.status(404).send("User Not Found");
+      console.log(req.cookies) 
+      res.status(404).send("User Not Found"); 
     }
   } catch (err) {
     res.status(404).send("something went wrong " + err.message);
