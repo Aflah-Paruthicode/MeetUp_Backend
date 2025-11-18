@@ -1,11 +1,26 @@
+const jwt = require("jsonwebtoken");
+const User = require("../model/user");
+
+const userAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    if (token) throw new Error("Token is not valid!!!");
+
+    const decodedObj = await jwt.verify(token, "DEV@CHATIME$790");
+
+    const { _id } = decodedObj;
+
+    const user = await User.findById({ _id: _id });
+
+    if (!user) throw new Error("User not found");
+
+    next();
+  } catch (err) {
+    res.status(400).send("Error In Auth - " + err.message);
+  }
+};
 
 
-
-const userAuth = (req,res) => {
-    try {
-
-    } catch (err) {
-        res.status(400).send('Error In Auth - '+err.message)
-    }
+module.exports = {
+    userAuth
 }
- 

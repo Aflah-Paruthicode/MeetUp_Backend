@@ -6,11 +6,12 @@ const app = express();
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken');
+const {userAuth} = require('./middlewares/auth')
 
 app.use(express.json());
 app.use(cookieParser())
 
-app.post("/signup", async (req, res) => {
+app.post("/signup",userAuth, async (req, res) => {
   try {
     const { name, email, password, favMovie, gender, place, studying } =
       req.body;
