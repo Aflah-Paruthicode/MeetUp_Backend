@@ -4,7 +4,7 @@ const User = require("../model/user");
 const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    if (token) throw new Error("Token is not valid!!!");
+    if (!token) throw new Error("Token is not valid!!!");
 
     const decodedObj = await jwt.verify(token, "DEV@CHATIME$790");
 
@@ -12,8 +12,9 @@ const userAuth = async (req, res, next) => {
 
     const user = await User.findById({ _id: _id });
 
+    console.log(user)
     if (!user) throw new Error("User not found");
-
+    req.user = user;
     next();
   } catch (err) {
     res.status(400).send("Error In Auth - " + err.message);
