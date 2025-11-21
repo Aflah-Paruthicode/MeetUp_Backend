@@ -1,7 +1,10 @@
 
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
-const { validateEditProffile } = require("../utils/validation");
+const {
+  validateEditProffile,
+  validateCurrPassword,
+} = require("../utils/validation");
 const proffileRouter = express.Router();
 
 proffileRouter.get("/proffile/view", userAuth, async (req, res) => {
@@ -28,6 +31,23 @@ proffileRouter.patch("/proffile/edit", userAuth, async (req, res) => {
     loggedInUser.save();
   } catch (err) {
     res.status(400).send("Error in update proffile - " + err.message);
+  }
+});
+
+proffileRouter.patch("proffile/password", userAuth, async (req, res) => {
+  try {
+    if (!validateCurrPassword(req)) throw new Error("invalid password");
+
+    if (!validNewPassword(req))
+      throw new Error("The new Password is not strong");
+
+    if (!validNewPassword(req)) throw new Error("New password is not strong");
+
+    const loggedInUser = req.user;
+    loggedInUser.save();
+    res.status(200).send('password update successfull')
+  } catch (err) {
+    res.status(400).send("Error in edit password - " + err.message);
   }
 });
 

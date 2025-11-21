@@ -1,6 +1,6 @@
 
 const validator = require("validator");
-
+const bcrypt = require("bcrypt");
 const validateSignUpData = async (req) => {
   const { name, email, favMovie, password } = req.body;
   if (!name.trim()) {
@@ -29,7 +29,23 @@ const validateEditProffile = (req) => {
   return isEditAllowed;
 };
 
+const validateCurrPassword = async (req) => {
+  const password = req.user.password;
+  const isPasswordMatch = await bcrypt.compare(req.body.currPassword, password);
+
+  return isPasswordMatch;
+};
+
+const validNewPassword = async (req) => {
+    const newPassword = req.body.newPassword;
+    if(!validator.isStrongPassword(newPassword)) return false
+    req.user.password = await bcrypt.hash(newPassword,10);
+    return true;
+}
+
 module.exports = {
   validateSignUpData,
   validateEditProffile,
+  validateCurrPassword,
+  validNewPassword
 };
