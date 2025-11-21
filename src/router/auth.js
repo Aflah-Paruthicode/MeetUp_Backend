@@ -1,4 +1,3 @@
-
 const express = require("express");
 const authRouter = express.Router();
 const { validateSignUpData } = require("../utils/validation");
@@ -6,7 +5,6 @@ const bcrypt = require("bcrypt");
 const User = require("../model/user");
 const jwt = require("jsonwebtoken");
 const { userAuth } = require("../middlewares/auth");
-
 
 authRouter.post("/signup", userAuth, async (req, res) => {
   try {
@@ -48,6 +46,11 @@ authRouter.post("/login", async (req, res) => {
   } catch (err) {
     res.status(404).send("Error in login - " + err);
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  res.cookie("token", null, { expires: new Date(Date.now()) });
+  res.send("logout successfull");
 });
 
 module.exports = authRouter;
