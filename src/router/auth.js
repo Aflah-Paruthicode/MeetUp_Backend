@@ -6,7 +6,7 @@ const User = require("../model/user");
 const jwt = require("jsonwebtoken");
 const { userAuth } = require("../middlewares/auth");
 
-authRouter.post("/signup", userAuth, async (req, res) => {
+authRouter.post("/signup", async (req, res) => {
   try {
     const { name, email, password, favMovie, gender, place, studying } =
       req.body;
