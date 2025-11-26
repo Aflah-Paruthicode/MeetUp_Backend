@@ -5,15 +5,13 @@ const requestRouter = express.Router();
 const User = require("../model/user");
 
 requestRouter.post(
-  "/sendConnectionReq/:toUserId/:status",
+  "/request/send/:toUserId/:status",
   userAuth,
   async (req, res) => {
     const fromUserId = req.user._id;
-    const toUserId = req.params.toUserId;
-    const status = req.params.status;
+    const { toUserId, status } = req.params;
 
     try {
-
       if (fromUserId == toUserId)
         throw new Error("Cannot send request to yourself");
 
@@ -52,6 +50,33 @@ requestRouter.post(
     } catch (err) {
       res.status(200).send("Error in request send - " + err.message);
     }
+  }
+);
+
+requestRouter.post(
+  "/request/review/:requestId/:status",
+  userAuth,
+  async (req, res) => {
+    const loggedInUser = req.user;
+    const { requestId, status } = req.params;
+
+    const allowedStatus = ["accepted", "rejected"];
+    if (!allowedStatus.includes(status))
+      res.status(400).json({ message: "Status not allowed" });
+
+    const connectionRequest = await ConnectionRequest.findOne({
+      _id: requestId,
+      toUserId: loggedInUser._id, 
+      status: "interested",
+    });
+ 
+    if (!connectionRequest)
+      res.status(404).json({ message: "Request not found" });
+
+    connectionRequest.status = status;
+
+    const data = await connectionRequest.save();
+    res.status(200).json({ message: "Connection request " + status, data });
   }
 );
 
