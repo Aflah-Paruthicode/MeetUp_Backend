@@ -20,6 +20,25 @@ userRouter("/user/requests/received", userAuth, async (req, res) => {
   }
 });
 
+userRouter.get("/user/connections", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+
+    const connectionRequests = ConnectionRequest.find({
+      $or: [
+        { toUserId: loggedInUser._id, status: "accepted" },
+        { fromUserId: loggedInUser._id, status: "accepted" },
+      ],
+    }).populate("fromUserId", " name favMovie studying gender ");
+
+    const data = connectionRequests.map((row) => row.fromUserId);
+
+    res.json({ message: " Connections ", data: data });
+  } catch (err) {
+    res.status(400).send("ERR: " + err.message);
+  }
+});
+
 module.exports = {
   userRouter,
 };
