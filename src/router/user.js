@@ -30,6 +30,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { fromUserId: loggedInUser._id, status: "accepted" },
       ],
     }).populate("fromUserId", " name favMovie studying gender ");
+    //  got error in here
 
     const data = connectionRequests.map((row) => row.fromUserId);
 
@@ -38,7 +39,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     res.status(400).send("ERR: " + err.message);
   }
 });
-
+ 
 module.exports = {
   userRouter,
 };
