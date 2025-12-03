@@ -38,7 +38,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   } catch (err) {
     res.status(400).send("ERR: " + err.message);
   }
-});
+}); 
  
 module.exports = {
   userRouter,
