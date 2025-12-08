@@ -29,7 +29,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { toUserId: loggedInUser._id, status: "accepted" },
         { fromUserId: loggedInUser._id, status: "accepted" },
       ],
-    }).populate("fromUserId", " name favMovie studying gender ");
+    }).populate("fromUserId", " name favMovie studying gender "); 
     //  got error in here
 
     const data = connectionRequests.map((row) => row.fromUserId);
