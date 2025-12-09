@@ -2,6 +2,14 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../model/connectionRequest");
 const userRouter = express.Router();
+const UserSafeData = [
+  "firstName",
+  "lastName",
+  "photoUrl",
+  "about",
+  "gender",
+  "skills",
+];
 
 userRouter("/user/requests/received", userAuth, async (req, res) => {
   try {
@@ -9,8 +17,7 @@ userRouter("/user/requests/received", userAuth, async (req, res) => {
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
-    }).populate("fromUserId", "name favMovie studying gender");
-
+    }).populate("fromUserId", UserSafeData);
     res.json({
       message: "Data fetched successfully",
       data: connectionRequests,
@@ -29,17 +36,18 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { toUserId: loggedInUser._id, status: "accepted" },
         { fromUserId: loggedInUser._id, status: "accepted" },
       ],
-    }).populate("fromUserId", " name favMovie studying gender "); 
-    //  got error in here
+    })
+      .populate("fromUserId", UserSafeData)
+      .populate("toUserId", UserSafeData);
 
     const data = connectionRequests.map((row) => row.fromUserId);
 
     res.json({ message: " Connections ", data: data });
   } catch (err) {
-    res.status(400).send("ERR: " + err.message);    
+    res.status(400).send("ERR: " + err.message);
   }
-}); 
- 
-module.exports = { 
+});
+
+module.exports = {
   userRouter,
 };

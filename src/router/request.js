@@ -46,7 +46,7 @@ requestRouter.post(
       });
 
       const data = await request.save();
-      res.send(toUser.name + " is sent the connection request" + data);
+      res.send(toUser.firstName +" "+ toUser.lastName + " is sent the connection request" + data);
     } catch (err) {
       res.status(200).send("Error in request send - " + err.message);
     }
@@ -60,7 +60,8 @@ requestRouter.post(
     const loggedInUser = req.user;
     const { requestId, status } = req.params;
 
-    const allowedStatus = ["accepted", "rejected"];
+    try {
+      const allowedStatus = ["accepted", "rejected"];
     if (!allowedStatus.includes(status))
       res.status(400).json({ message: "Status not allowed" });
 
@@ -77,6 +78,9 @@ requestRouter.post(
 
     const data = await connectionRequest.save();
     res.status(200).json({ message: "Connection request " + status, data });
+    } catch (err) {
+      res.status(400).send('Error in request review - ' + err.message);
+    }
   }
 );
 
