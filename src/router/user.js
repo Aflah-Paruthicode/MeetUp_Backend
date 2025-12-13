@@ -54,6 +54,38 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
+userRouter.get('/feed', userAuth, async(req,res) => {
+
+  try {
+
+    //  do not see the interested or ignored people again,
+    //  do not see the person who already connected,
+    //  do not see their own proffile here.
+
+    const loggedInUser = req.user;
+
+    const connectionRequests = await ConnectionRequest.find({
+       $or : [
+        {fromUserId: loggedInUser._id},
+        {toUserId: loggedInUser._id}
+       ]
+    }).select("fromUserId toUserId");
+
+    const hideUsersFromFeed = new Set();
+    connectionRequests.forEach((req) => {
+      hideUsersFromFeed.add(req.fromUserId.toString());
+      hideUsersFromFeed.add(req.toUserId.toString());
+    });
+
+    console.log('ehehehhehhheeeee')
+
+    
+     
+  } catch (err) {
+    res.status(400).send('ERROR - '+err.message);
+  }
+})
+
 module.exports = {
   userRouter,
 };
