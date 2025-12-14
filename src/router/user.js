@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../model/connectionRequest");
+const User = require("../model/user");
 const userRouter = express.Router();
 const UserSafeData = [
   "firstName",
@@ -40,7 +41,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("fromUserId", UserSafeData)
       .populate("toUserId", UserSafeData);
 
-    const data = connectionRequests.map((row) => { 
+    const data = connectionRequests.map((row) => {
       if (row.fromUserId._id.toString() == loggedInUser._id.toString()) {
         return row.toUserId;
       } else {
@@ -54,10 +55,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
   }
 });
 
-userRouter.get('/feed', userAuth, async(req,res) => {
-
+userRouter.get("/feed", userAuth, async (req, res) => {
   try {
-
     //  do not see the interested or ignored people again,
     //  do not see the person who already connected,
     //  do not see their own proffile here.
@@ -65,10 +64,7 @@ userRouter.get('/feed', userAuth, async(req,res) => {
     const loggedInUser = req.user;
 
     const connectionRequests = await ConnectionRequest.find({
-       $or : [
-        {fromUserId: loggedInUser._id},
-        {toUserId: loggedInUser._id}
-       ]
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
     }).select("fromUserId toUserId");
 
     const hideUsersFromFeed = new Set();
@@ -77,14 +73,16 @@ userRouter.get('/feed', userAuth, async(req,res) => {
       hideUsersFromFeed.add(req.toUserId.toString());
     });
 
-    console.log('ehehehhehhheeeee')
+    const user = await User.find({
+      _id : {$nin : Array.from(hideUsersFromFeed)},
+    });
 
-    
-     
+    res.send(connectionRequests)
+    console.log("ehehehhehhheeeee");
   } catch (err) {
-    res.status(400).send('ERROR - '+err.message);
+    res.status(400).send("ERROR - " + err.message);
   }
-})
+});
 
 module.exports = {
   userRouter,
