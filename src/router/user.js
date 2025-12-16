@@ -61,6 +61,11 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     //  do not see the person who already connected,
     //  do not see their own proffile here.
 
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    if(limit > 50) limit = 50;
+    const skip = (page -1) * limit;
+
     const loggedInUser = req.user;
 
     const connectionRequests = await ConnectionRequest.find({
@@ -73,12 +78,14 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       hideUsersFromFeed.add(req.toUserId.toString());
     });
 
-    const user = await User.find({
-      _id : {$nin : Array.from(hideUsersFromFeed)},
-    });
-
-    res.send(connectionRequests)
-    console.log("ehehehhehhheeeee");
+    const users = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $ne: loggedInUser._id}}
+      ],
+    }).select(UserSafeData);
+ 
+    res.json({data : users});
   } catch (err) {
     res.status(400).send("ERROR - " + err.message);
   }
