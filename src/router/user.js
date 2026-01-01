@@ -27,7 +27,7 @@ userRouter("/user/requests/received", userAuth, async (req, res) => {
     res.status(400).send("ERROR: " + err.message);
   }
 });
-
+ 
 userRouter.get("/user/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;

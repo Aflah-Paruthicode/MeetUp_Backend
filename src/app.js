@@ -2,7 +2,9 @@ const express = require("express");
 const { connectDb } = require("./config/database");
 const app = express();
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -18,7 +20,7 @@ connectDb()
   .then(() => {
     console.log("Database connection is did");
     app.listen(8080, () => {
-      console.log("Server Started"); 
+      console.log("Server Started");
     });
   })
   .catch((err) => console.error("Got a db error"));

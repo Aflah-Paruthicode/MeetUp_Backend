@@ -12,14 +12,14 @@ const validateSignUpData = async (req) => {
     throw new Error("Email is not valid");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error("Password is not strong");
-  } else if (about.length < 1 || about.length > 30) {
+  } else if (about.length < 1 || about.length > 150) {
     throw new Error("Something went wrong with about");
   }
 };
 
-const validateEditProffile = (req) => {
+const validateEditProffile = (req) => { 
   const allowedFields = [
-    "firstName",
+    "firstName", 
     "lastName",
     "photoUrl",
     "about",
