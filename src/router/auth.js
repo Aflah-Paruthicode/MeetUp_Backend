@@ -32,23 +32,23 @@ authRouter.post("/signup", async (req, res) => {
   }
 });
 
-authRouter.post("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => { 
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
     if (!user) throw new Error("Invalid credentials");
     const isPaswordValid = await bcrypt.compare(password, user.password);
-    if (!isPaswordValid) throw new Error("Invalid credentials");
+    if (!isPaswordValid) throw new Error("Invalid credentials"); 
     const token = await jwt.sign({ _id: user._id }, "DEV@CHATIME$790", {
       expiresIn: "7d",
     });
     res.cookie("token", token);
-    res.status(200).send("Login Succeccfull");
+    res.status(200).json({message : "Login Succeccfull",data : user});
   } catch (err) {
     res.status(404).send("Error in login - " + err);
   }
 });
-
+  
 authRouter.post("/logout", (req, res) => {
   res.cookie("token", null, { expires: new Date(Date.now()) });
   res.send("logout successfull");
