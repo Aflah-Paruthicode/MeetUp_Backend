@@ -11,15 +11,17 @@ app.use(cookieParser());
 const authRouter = require("./router/auth");
 const proffileRouter = require("./router/proffile");
 const requestRouter = require("./router/request");
+const userRouter = require('./router/user');
 
 app.use("/", authRouter);
 app.use("/", proffileRouter);
 app.use("/", requestRouter);
+app.use("/",userRouter);
 
 connectDb()
   .then(() => {
-    console.log("Database connection is did");
-    app.listen(8080, () => {
+    console.log("Database connection is did"); 
+    app.listen(8080, () => { 
       console.log("Server Started");
     });
   })

@@ -12,21 +12,21 @@ const UserSafeData = [
   "skills",
 ];
 
-userRouter("/user/requests/received", userAuth, async (req, res) => {
-  try {
-    const loggedInUser = req.user;
-    const connectionRequests = await ConnectionRequest.find({
-      toUserId: loggedInUser._id,
-      status: "interested",
-    }).populate("fromUserId", UserSafeData);
-    res.json({
-      message: "Data fetched successfully",
-      data: connectionRequests,
-    });
-  } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
-  }
-});
+// userRouter("/user/requests/received", userAuth, async (req, res) => {
+//   try {
+//     const loggedInUser = req.user;
+//     const connectionRequests = await ConnectionRequest.find({
+//       toUserId: loggedInUser._id,
+//       status: "interested",
+//     }).populate("fromUserId", UserSafeData);
+//     res.json({
+//       message: "Data fetched successfully",
+//       data: connectionRequests,
+//     });
+//   } catch (err) {
+//     res.status(400).send("ERROR: " + err.message);
+//   }
+// });
  
 userRouter.get("/user/connections", userAuth, async (req, res) => {
   try {
@@ -91,6 +91,4 @@ userRouter.get("/feed", userAuth, async (req, res) => {
   }
 });
 
-module.exports = {
-  userRouter,
-};
+module.exports = userRouter

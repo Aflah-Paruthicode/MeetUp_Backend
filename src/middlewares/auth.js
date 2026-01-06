@@ -13,11 +13,11 @@ const userAuth = async (req, res, next) => {
     const user = await User.findById({ _id: _id });
 
     console.log(user)
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error("User not found"); 
     req.user = user;
     next();
   } catch (err) {
-    res.status(400).send("Error In Auth - " + err.message);
+    res.status(400).send("Error In Auth - " + err.message); 
   }
 };
 
