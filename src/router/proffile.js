@@ -21,13 +21,16 @@ proffileRouter.get("/proffile/view", userAuth, async (req, res) => {
 });
 
 proffileRouter.patch("/proffile/edit", userAuth, async (req, res) => {
+  console.log('heey')
   try {
     if (!validateEditProffile(req)) throw new Error("Invalid edit request");
-
+    console.log('yesssssss yea')
     let loggedInUser = req.user;
     Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
-    loggedInUser.save();
-    res.status(200).send("Proffile update successfull");
+
+    await loggedInUser.save();
+
+    res.json({message:"Proffile update successfull",data : loggedInUser});
   } catch (err) {
     res.status(400).send("Error in update proffile - " + err.message);
   }

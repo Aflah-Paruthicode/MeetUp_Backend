@@ -12,22 +12,22 @@ const UserSafeData = [
   "skills",
 ];
 
-// userRouter("/user/requests/received", userAuth, async (req, res) => {
-//   try {
-//     const loggedInUser = req.user;
-//     const connectionRequests = await ConnectionRequest.find({
-//       toUserId: loggedInUser._id,
-//       status: "interested",
-//     }).populate("fromUserId", UserSafeData);
-//     res.json({
-//       message: "Data fetched successfully",
-//       data: connectionRequests,
-//     });
-//   } catch (err) {
-//     res.status(400).send("ERROR: " + err.message);
-//   }
-// });
- 
+userRouter.get("/user/requests/received", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const connectionRequests = await ConnectionRequest.find({
+      toUserId: loggedInUser._id,
+      status: "interested",
+    }).populate("fromUserId", UserSafeData);
+    res.json({
+      message: "Data fetched successfully",
+      data: connectionRequests,
+    });
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
+
 userRouter.get("/user/connections", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
@@ -57,14 +57,10 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
-    //  do not see the interested or ignored people again,
-    //  do not see the person who already connected,
-    //  do not see their own proffile here.
-
     const page = parseInt(req.query.page) || 1;
     let limit = parseInt(req.query.limit) || 10;
-    if(limit > 50) limit = 50;
-    const skip = (page -1) * limit;
+    if (limit > 50) limit = 50;
+    const skip = (page - 1) * limit;
 
     const loggedInUser = req.user;
 
@@ -81,14 +77,14 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     const users = await User.find({
       $and: [
         { _id: { $nin: Array.from(hideUsersFromFeed) } },
-        { _id: { $ne: loggedInUser._id}}
+        { _id: { $ne: loggedInUser._id } },
       ],
     }).select(UserSafeData);
- 
-    res.json({data : users});
+
+    res.json({ data: users });
   } catch (err) {
     res.status(400).send("ERROR - " + err.message);
   }
 });
 
-module.exports = userRouter
+module.exports = userRouter;

@@ -16,6 +16,10 @@ const userSchema = new Schema(
       minLength: 4,
       maxLength: 30,
     },
+    age: {
+      type: Number,
+      required: true,
+    },
     email: {
       type: String,
       lowercase: true,
@@ -30,7 +34,7 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true, 
+      required: true,
       validate(value) {
         if (!validator.isStrongPassword(value)) {
           throw new Error("Password Not Valid");
@@ -39,7 +43,8 @@ const userSchema = new Schema(
     },
     photoUrl: {
       type: String,
-      default : 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3485.jpg?w=360',
+      default:
+        "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3485.jpg?w=360",
       required: true,
       validate(value) {
         if (!validator.isURL(value)) {
