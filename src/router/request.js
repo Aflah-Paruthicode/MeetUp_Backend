@@ -54,7 +54,7 @@ requestRouter.post(
 );
 
 requestRouter.post(
-  "/request/review/:requestId/:status", 
+  "/request/review/:requestId/:status",  
   userAuth,
   async (req, res) => {
     const loggedInUser = req.user;
