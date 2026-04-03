@@ -4,7 +4,7 @@ const User = require("../model/user");
 const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    if (!token) res.status(401).send("Please login!")
+    if (!token) return res.status(401).send("Please login!")
 
     const decodedObj = await jwt.verify(token, "DEV@CHATIME$790");
 
@@ -17,7 +17,7 @@ const userAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    res.status(400).send("Error In Auth - " + err.message); 
+    return res.status(400).send("Error In Auth - " + err.message); 
   }
 };
 

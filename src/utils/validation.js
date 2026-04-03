@@ -31,7 +31,7 @@ const validateEditProffile = (req) => {
   );
   return isEditAllowed;
 };
-
+ 
 const validateCurrPassword = async (req) => {
   const password = req.user.password;
   const isPasswordMatch = await bcrypt.compare(req.body.currPassword, password);
