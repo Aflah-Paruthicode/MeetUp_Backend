@@ -25,6 +25,7 @@ const validateEditProffile = (req) => {
     "about",
     "gender",
     "skills",
+    "age"
   ];
   const isEditAllowed = Object.keys(req.body).every((feild) =>
     allowedFields.includes(feild)

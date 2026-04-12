@@ -4,73 +4,67 @@ const ConnectionRequest = require("../model/connectionRequest");
 const requestRouter = express.Router();
 const User = require("../model/user");
 
-requestRouter.post(
-  "/request/send/:toUserId/:status",
-  userAuth,
-  async (req, res) => {
-    const fromUserId = req.user._id;
-    const { toUserId, status } = req.params;
+requestRouter.post("/send/:toUserId/:status", userAuth, async (req, res) => {
+  const fromUserId = req.user._id;
+  const { toUserId, status } = req.params;
 
-    try {
-      if (fromUserId == toUserId)
-        throw new Error("Cannot send request to yourself");
+  try {
+    if (fromUserId == toUserId)
+      throw new Error("Cannot send request to yourself");
 
-      const toUser = await User.findOne({ _id: toUserId });
-      if (!toUser) return res.status(400).json({ message: "user not found !" });
+    const toUser = await User.findOne({ _id: toUserId });
+    if (!toUser) return res.status(400).json({ message: "user not found !" });
 
-      const existingConnectionRequest = await ConnectionRequest.findOne({
-        $or: [
-          { fromUserId, toUserId },
-          { fromUserId: toUserId, toUserId: fromUserId },
-        ],
-      });
- 
-      if (existingConnectionRequest)
-        return res
-          .status(400)
-          .send(
-            "Connection Request already present : " + existingConnectionRequest
-          );
+    const existingConnectionRequest = await ConnectionRequest.findOne({
+      $or: [
+        { fromUserId, toUserId },
+        { fromUserId: toUserId, toUserId: fromUserId },
+      ],
+    });
 
-      const allowedStatus = ["ignored", "interested"];
-      if (!allowedStatus.includes(status)) {
-        return res
-          .status(400)
-          .json({ message: "invalid status type + ", status });
-      }
+    if (existingConnectionRequest)
+      return res
+        .status(400)
+        .send(
+          "Connection Request already present : " + existingConnectionRequest
+        );
 
-      const request = new ConnectionRequest({
-        fromUserId,
-        toUserId,
-        status,
-      });
-
-      const data = await request.save();
-      res.send(req.user.firstName + " " + req.user.lastName + " is sent the connection request"+ toUser.firstName +" "+ toUser.lastName + data);
-    } catch (err) {
-      res.status(200).send("Error in request send - " + err.message);
+    const allowedStatus = ["ignored", "interested"];
+    if (!allowedStatus.includes(status)) {
+      return res
+        .status(400)
+        .json({ message: "invalid status type + ", status });
     }
-  } 
+
+    const request = new ConnectionRequest({
+      fromUserId,
+      toUserId,
+      status,
+    });
+
+    const data = await request.save();
+    res.send(req.user.firstName + " " + req.user.lastName + " is sent the connection request" + toUser.firstName + " " + toUser.lastName + data);
+  } catch (err) {
+    res.status(200).send("Error in request send - " + err.message);
+  }
+}
 );
 
-requestRouter.post(
-  "/request/review/:requestId/:status",  
-  userAuth,
-  async (req, res) => {
-    const loggedInUser = req.user;
-    const { requestId, status } = req.params;
+requestRouter.post("/review/:requestId/:status", userAuth, async (req, res) => {
+  const loggedInUser = req.user;
+  const { requestId, status } = req.params;
 
-    try {
-      const allowedStatus = ["accepted", "rejected"];
+  try {
+    const allowedStatus = ["accepted", "rejected"];
     if (!allowedStatus.includes(status))
       res.status(400).json({ message: "Status not allowed" });
 
     const connectionRequest = await ConnectionRequest.findOne({
       _id: requestId,
-      toUserId: loggedInUser._id, 
+      toUserId: loggedInUser._id,
       status: "interested",
     });
- 
+
     if (!connectionRequest)
       res.status(404).json({ message: "Request not found" });
 
@@ -78,10 +72,10 @@ requestRouter.post(
 
     const data = await connectionRequest.save();
     res.status(200).json({ message: "Connection request " + status, data });
-    } catch (err) {
-      res.status(400).send('Error in request review - ' + err.message);
-    }
+  } catch (err) {
+    res.status(400).send('Error in request review - ' + err.message);
   }
+}
 );
 
 module.exports = requestRouter;
