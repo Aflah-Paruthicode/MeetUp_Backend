@@ -23,17 +23,11 @@ requestRouter.post("/send/:toUserId/:status", userAuth, async (req, res) => {
     });
 
     if (existingConnectionRequest)
-      return res
-        .status(400)
-        .send(
-          "Connection Request already present : " + existingConnectionRequest
-        );
+      return res.status(400).send("Connection Request already present : " + existingConnectionRequest);
 
     const allowedStatus = ["ignored", "interested"];
     if (!allowedStatus.includes(status)) {
-      return res
-        .status(400)
-        .json({ message: "invalid status type + ", status });
+      return res.status(400).json({ message: "invalid status type + ", status });
     }
 
     const request = new ConnectionRequest({
@@ -43,7 +37,7 @@ requestRouter.post("/send/:toUserId/:status", userAuth, async (req, res) => {
     });
 
     const data = await request.save();
-    res.send(req.user.firstName + " " + req.user.lastName + " is sent the connection request" + toUser.firstName + " " + toUser.lastName + data);
+    res.send(req.user.firstName + " " + req.user.lastName + " sent the connection request to " + toUser.firstName + " " + toUser.lastName + data);
   } catch (err) {
     res.status(200).send("Error in request send - " + err.message);
   }

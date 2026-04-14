@@ -2,7 +2,7 @@
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 
-const validateSignUpData = async (req) => {
+const validateSignUpData = async (req) => { 
   const { firstName,lastName, email, password, about } = req.body;
   if (!firstName.trim()) {
     throw new Error("first name is not valid");
@@ -11,9 +11,9 @@ const validateSignUpData = async (req) => {
   } else if (!validator.isEmail(email)) {
     throw new Error("Email is not valid");
   } else if (!validator.isStrongPassword(password)) {
-    throw new Error("Password is not strong");
+     throw new Error("Password is not strong");
   } else if (about.length < 1 || about.length > 150) {
-    throw new Error("Something went wrong with about");
+    throw new Error("Something went wrong with about"); 
   }
 };
 

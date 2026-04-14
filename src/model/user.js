@@ -7,13 +7,13 @@ const userSchema = new Schema(
     firstName: {
       type: String,
       required: true,
-      minLength: 4,
+      minLength: 3,
       maxLength: 30,
     },
     lastName: {
       type: String,
       required: true,
-      minLength: 4,
+      minLength: 3,
       maxLength: 30,
     },
     age: {
@@ -78,3 +78,4 @@ const userSchema = new Schema(
 );
 
 module.exports = mongoose.model("User", userSchema);
+  
