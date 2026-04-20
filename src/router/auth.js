@@ -26,10 +26,17 @@ authRouter.post("/signup", async (req, res) => {
       about,
       skills
     });
-    await user.save();
-    res.send("Document added successfull");
+    
+     const newUser = await user.save();
+
+    const token = await jwt.sign({ _id: user._id }, "DEV@CHATIME$790", {
+      expiresIn: "7d",
+    });
+
+    res.cookie("token", token); 
+    res.status(200).json({message:"Document added successfull",data: newUser});
   } catch (error) {
-    res.status(400).send("Error Occured In Adding Doc - " + error.message);
+    res.status(400).send("Error Occured In Adding Doc - " + error.message); 
   }
 });
 

@@ -12,8 +12,6 @@ const validateSignUpData = async (req) => {
     throw new Error("Email is not valid");
   } else if (!validator.isStrongPassword(password)) {
      throw new Error("Password is not strong");
-  } else if (about.length < 1 || about.length > 150) {
-    throw new Error("Something went wrong with about"); 
   }
 };
 
@@ -27,7 +25,7 @@ const validateEditProffile = (req) => {
     "skills",
     "age"
   ];
-  const isEditAllowed = Object.keys(req.body).every((feild) =>
+  const isEditAllowed = Object.keys(req.body).every((feild) => 
     allowedFields.includes(feild)
   );
   return isEditAllowed;
