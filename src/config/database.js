@@ -11,6 +11,5 @@ const connectDb = async () => {
     console.log(err)
   }
 };
- 
+
 module.exports = { connectDb };
-    

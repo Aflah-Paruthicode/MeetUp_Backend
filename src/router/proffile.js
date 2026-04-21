@@ -25,12 +25,12 @@ proffileRouter.post("/edit", userAuth, async (req, res) => {
   try {
     if (!validateEditProffile(req)) return res.status(401).send("Invalid edit request");
     console.log('yesssssss yea')
-    let loggedInUser = req.user; 
+    let loggedInUser = req.user;
     Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]));
 
     await loggedInUser.save();
 
-    res.json({message:"Proffile update successfull",data : loggedInUser});
+    res.json({ message: "Proffile update successfull", data: loggedInUser });
   } catch (err) {
     res.status(400).send("Error in update proffile - " + err.message);
   }
@@ -48,6 +48,6 @@ proffileRouter.patch("/password", userAuth, async (req, res) => {
   } catch (err) {
     res.status(400).send("Error in edit password - " + err.message);
   }
-}); 
+});
 
 module.exports = proffileRouter;

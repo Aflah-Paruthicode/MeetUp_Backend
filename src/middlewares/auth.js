@@ -13,15 +13,15 @@ const userAuth = async (req, res, next) => {
     const user = await User.findById({ _id: _id });
 
     console.log(user)
-    if (!user) throw new Error("User not found"); 
+    if (!user) throw new Error("User not found");
     req.user = user;
     next();
   } catch (err) {
-    return res.status(400).send("Error In Auth - " + err.message); 
+    return res.status(400).send("Error In Auth - " + err.message);
   }
 };
 
 
 module.exports = {
-    userAuth
+  userAuth
 }
