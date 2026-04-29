@@ -3,6 +3,7 @@ const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../model/connectionRequest");
 const requestRouter = express.Router();
 const User = require("../model/user");
+const sendMail = require('../utils/ses_sendMail');
 
 requestRouter.post("/send/:toUserId/:status", userAuth, async (req, res) => {
   const fromUserId = req.user._id;
@@ -37,6 +38,10 @@ requestRouter.post("/send/:toUserId/:status", userAuth, async (req, res) => {
     });
 
     const data = await request.save();
+    const resEmail = await sendMail.run('A new connection request from '+req.user.firstName +' '+ req.user.lastName,
+       req.user.firstName + " " + req.user.lastName + " sent the connection request to " + toUser.firstName + " " + toUser.lastName);
+    console.log(resEmail)
+
     res.send(req.user.firstName + " " + req.user.lastName + " sent the connection request to " + toUser.firstName + " " + toUser.lastName + data);
   } catch (err) {
     res.status(200).send("Error in request send - " + err.message);

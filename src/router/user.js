@@ -81,7 +81,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $ne: loggedInUser._id } },
       ],
     }).select(UserSafeData);
-
+    
     res.json({ data: users });
   } catch (err) {
     res.status(400).send("ERROR - " + err.message);
