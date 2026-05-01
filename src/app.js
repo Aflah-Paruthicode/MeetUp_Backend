@@ -9,6 +9,8 @@ const proffileRouter = require("./router/proffile");
 const requestRouter = require("./router/request");
 const userRouter = require("./router/user");
 
+require('./utils/cron_jobs')
+
 const corsOptions = {
   origin: "http://localhost:5173",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
